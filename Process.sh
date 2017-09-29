@@ -93,7 +93,7 @@ while read LINE; do
     fi
 done < .temp
 
-ffmpeg -f image2 -i ".frames/%06d.png" -r 25 -f m4a -i $AUDIOFILE "out.mov"
+ffmpeg -f image2 -i ".frames/%06d.png" -r 25 -f m4a -i "$AUDIOFILE" "out.mov"
 
 # Clean up
 
