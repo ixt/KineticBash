@@ -1,2 +1,0 @@
-file '.frames/start.mp4'
-file '.frames/newframe.mp4'
