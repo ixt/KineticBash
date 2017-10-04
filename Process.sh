@@ -2,10 +2,10 @@
 FILE=$1
 AUDIOFILE=$2
 HEADEREND=$(sed -n "/##/=" "$FILE")
-WORKINGDIR=$(dirname $0)
 DEBUG=0
 FPS=25
 
+WORKINGDIR=$(dirname $0)
 cd $WORKINGDIR
 
 if [ ! $QUIET ]; then echo "[*] Working Environment Created"; fi
