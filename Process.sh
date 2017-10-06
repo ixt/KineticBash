@@ -56,6 +56,18 @@ while read LINE; do
     sed -i "$LINE"'s/|.*/|'"$MS"'/' .temp
 done < <(sed -n "/|/=" .temp)
 
+# Calculate the average difference of time between each word
+
+TEMPPAGE=$(mktemp)
+lastNumber=0
+while read LINE; do 
+    difference=$(( LINE - lastNumber ))
+    echo $difference >> $TEMPPAGE
+    lastNumber=$LINE
+done < <(tail +2 .temp | cut -d"|" -f2)
+
+
+
 if [ ! $QUIET ]; then echo "[*] Making Frames"; fi
 convert -background black -fill orangered -size 1280x800 label:"test-message" .frames/000000.png
 
@@ -76,15 +88,16 @@ while read LINE; do
             COUNTNO=$(printf %06d $COUNT) 
             NEXTFRAME=$(bc -l <<< "($COUNT + 1 ) * $MILLISFRAMES")
             STRING="${WORDBANK[@]}"
-            if [ "$LASTSTRING" == "$STRING" ]; then
-                cp .frames/"$(printf %06d $((COUNT - 1)))".png .frames/"$COUNTNO".png
-            else
-                if [ "${#WORDBANK[@]}" -eq "0" ]; then 
-                    convert -background black -fill black -size 1280x800 -gravity center label:"starting" .frames/"$COUNTNO".png
-                else
-                    convert -background black -fill orangered -size 1280x800 -gravity center label:"$STRING" .frames/"$COUNTNO".png
-                fi
-            fi
+            echo ${#WORDBANK[@]}
+            # if [ "$LASTSTRING" == "$STRING" ]; then
+            #     cp .frames/"$(printf %06d $((COUNT - 1)))".png .frames/"$COUNTNO".png
+            # else
+            #     if [ "${#WORDBANK[@]}" -eq "0" ]; then 
+            #         convert -background black -fill black -size 1280x800 -gravity center label:"starting" .frames/"$COUNTNO".png
+            #     else
+            #         convert -background black -fill orangered -size 1280x800 -gravity center label:"$STRING" .frames/"$COUNTNO".png
+            #     fi
+            # fi
             LASTSTRING=$STRING
             (( COUNT++ ))
         done
@@ -93,7 +106,7 @@ while read LINE; do
     fi
 done < .temp
 
-ffmpeg -f image2 -i ".frames/%06d.png" -r 25 -f m4a -i "$AUDIOFILE" "out.mov"
+#ffmpeg -f image2 -i ".frames/%06d.png" -r 25 -f m4a -i "$AUDIOFILE" "out.mov"
 
 # Clean up
 
